@@ -1,0 +1,13 @@
+-- 레스토랑 이름으로 전국에 몇 개의 매장이 있는지 개수를 세고 평균 평점, 가격, 배달 시간을 확인한다. 
+-- 레스토랑 이름 별 평균 평점이 높은 순으로 20개만 확인한다.   
+
+SELECT restaurant_name, 
+		 count(1) as cnt, 
+		 avg(rating) as avg_rating, 
+		 avg(average_price) as avg_price, 
+	  	 avg(average_delivery_time) as avg_delivery_time
+FROM restaurant
+GROUP BY 1
+ORDER BY 3 DESC
+LIMIT 20
+-- 확인 결과, 평점이 높은 상위 20개의 레스토랑은 매장이 1개이다.
