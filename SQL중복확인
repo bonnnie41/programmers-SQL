@@ -1,0 +1,15 @@
+-- 중복행 확인
+SELECT count(1) as cnt, count(distinct restaurant_name) as cnt_distinct
+FROM restaurant
+
+-- name이 중복된 행  
+SELECT restaurant_name, count(1) as cnt
+FROM restaurant
+GROUP BY 1
+HAVING cnt > 1
+ORDER BY cnt DESC
+
+SELECT *
+FROM restaurant
+WHERE restaurant_name IN ('Pizza', 'BBQ')
+ORDER BY restaurant_name, location
