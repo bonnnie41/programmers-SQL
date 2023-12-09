@@ -1,0 +1,101 @@
+--count에 따른 평점 변화가 있는지 확인
+WITH counts as (
+	SELECT restaurant_name,count(1) as cnt
+	FROM indian_restaurants
+	GROUP BY 1
+)
+SELECT CASE cnt
+		WHEN 1 THEN ‘cnt-1’
+		WHEN 2 THEN ‘cnt-2’
+		ELSE ‘cnt-ov3’
+		END as cnt_group, avg(rating) as avg_rating
+FROM counts INNER JOIN indian_restaurants ON counts.restaurant_name = indian_restaurants.restaurant_name
+GROUP BY 1
+
+--히스토그램
+WITH counts as (
+	SELECT restaurant_name,count(1) as cnt
+	FROM indian_restaurants
+	GROUP BY 1
+)
+SELECT counts.restaurant_name, cnt, rating
+FROM counts INNER JOIN indian_restaurants ON counts.restaurant_name = indian_restaurants.restaurant_name
+
+--지역별 매장 수
+WITH cnts as(	
+	SELECT location, count(1) as cnt
+	FROM 
+	GROUP BY 1
+) 
+SELECT location,, percent_rank() over (ORDER BY cnt) as cnt_rank
+FROM cnts
+ORDER 2 DESC
+LIMIT 30
+
+--지역별 매장 수 상위 5%
+WITH cnts as(	
+	SELECT location, count(1) as cnt
+	FROM 
+	GROUP BY 1
+),
+res as(SELECT location,, percent_rank() over (ORDER BY cnt) as cnt_rank
+	FROM cnts
+)
+SELECT location
+FROM res
+WHERE cnt_rank >0.95
+
+--지역별 음식점 특징 살펴보기
+SELECT location, avg(rating) as avg_rating, avg(average_price) as avg_price, avg(average_delivery_time_ as avg_time,
+MAX(average_price) as max_price, count(restaurant_name)
+FROM 
+GROUP BY 1
+ORDER BY 3 DESC
+LIMIT 10
+
+-- 가격이 가장 비싼 지역과 저렴한 지역 비교
+SELECT IF(south_indian_or_not= 0, ‘south-0’, ‘south-1’) as group_name, AVG(average_price) as avg_price
+FROM restaurant
+GROUP BY 1
+
+UNION
+
+SELECT IF(north_indian_or_not= 0, ‘north-0’, ‘north-1’) as group_name, AVG(average_price) as avg_price
+FROM restaurant
+GROUP BY 1
+
+UNION
+
+SELECT IF(fast_food_or_not= 0, ‘fast-0’, ‘fast-1’) as group_name, AVG(average_price) as avg_price
+FROM restaurant
+GROUP BY 1
+
+UNION
+
+SELECT IF(street_food= 0, ‘street-0’, ‘street-1’) as group_name, AVG(average_price) as avg_price
+FROM restaurant
+GROUP BY 1
+
+UNION
+
+SELECT IF(biryani_or_not= 0, ‘biryani-0’, ‘biryani-1’) as group_name, AVG(average_price) as avg_price
+FROM restaurant
+GROUP BY 1
+
+UNION
+
+SELECT IF(bakery_or_not= 0, ‘bakery-0’, ‘bakery-1’) as group_name, AVG(average_price) as avg_price
+FROM restaurant
+GROUP BY 1
+
+--‘Rishikesh’, ‘Shimla’ 지역 전체 식당 수, 특성별 식당 수를 확인
+WITH base as (
+	SELECT location, south_indian_or_not, north_indian…
+	FROM restaurant
+	WHERE location IN (‘Rishikesh’, ‘Shimla’)
+)
+SELECT location, count(1) as tot_cnt, SUM(south_indian_or_not) as south_cnt,
+SUM(north_indian_or_not) as north_cnt, SUM(fast_food_or_not) as fast_cnt,
+SUM(bakery_or_not) as bakery_cnt
+FROM base
+GROUP BY 1
